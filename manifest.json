@@ -1,0 +1,24 @@
+﻿{
+  "name" : "豆瓣tags",
+  "manifest_version": 2,
+  "version" : "0.1",
+  "description" : "终于开始做的给豆瓣的所有条目加上Tags的功能",
+  "browser_action": {
+      "default_icon": "doubanicon-24.png",
+      "default_title": "给豆瓣的所有条目加上Tags的功能"
+  },
+  "content_scripts" : [
+    {
+      "matches" : [
+        "http://www.douban.com/*",
+        "http://api.douban.com/*"
+      ],
+      "js" : ["jquery-1.7.2.min.js","contentscript.js"],
+      "run_at" : "document_end",
+      "all_frames" : false
+    }
+  ],
+    "permissions": [
+        "tabs",	"http://www.douban.com/*","http://api.douban.com/people/*"
+    ]
+}
