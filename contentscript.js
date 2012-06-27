@@ -57,6 +57,55 @@ var datatypehash={3043:"推荐单曲",1025:"上传照片",1026:"相册推荐",10
 	var cur_location=location.href;
 	var ifupdate_url=cur_location.slice(0,29)=="http://www.douban.com/update/";
 	var people=cur_location.slice(29,-1);
+
+var	getUserName = function(){
+			if(ifupdate_url){
+				var login_user=$(".pl:last a").attr("href").replace("/people/","").replace("/statuses","");
+				return login_user;
+			}
+		},
+	redirecttoDouMail = function(){
+			var username=getUserName();
+				if(debug===1){console.log("username:"+username);}
+			location.href="http://www.douban.com/doumail/write?to="+username+"&savebyme=true";
+
+	},stringify_database = function(){
+			var database=[];
+			var database_string="";
+				Object.keys(localStorage)
+			      .forEach(function(key){
+			          var status=JSON.parse(localStorage[key]);
+			              database.push(JSON.stringify(status));
+			       });
+
+			    database_string=database.join(",");
+			    return database_string;
+			    
+	},savetoDouMail= function(){
+		//不能大于2万字，这个必须搞定
+			var title=$("#mt");
+			var data=$("[name='m_text']");
+			var submit=$("[name='m_submit']");
+				title.val("database");				
+			data.val(stringify_database());
+						setTimeout(function(){
+								submit.click();
+						},5000);
+	}
+
+//如果转到了自己给自己写邮件的页面则
+//可以插入一个遮罩层，然后让用户察觉不到存储的过程，待搞定后再转回
+//主界面，然后可以用spin.js来搞定AJAX效果什么的
+
+if(urlParams["savebyme"]==="true"){
+		savetoDouMail();
+
+}
+
+if(location.href==="http://www.douban.com/doumail/"){
+
+}
+
 //====================================================================
 //如果是在广播界面
 if(ifupdate_url){
@@ -74,10 +123,10 @@ var reshare_btn=$("div.actions a.btn-reshare");
 			$(this).after("&nbsp;&nbsp;<a class='btn-tag-it'>收藏该条目</a>");
 	});
 
-	//在Action条下运行的，收藏按钮
-	btn_tag_it=$("a.btn-tag-it");
-	btn_tag_it.bind("click",function(event){
-
+//在Action条下运行的，收藏按钮
+btn_tag_it=$("a.btn-tag-it");
+btn_tag_it.bind("click",function(event){
+	saveDatatoDouMail();
 var myself=$(this).parent().parent().parent().parent();
 	//优先判断是否为值得存取的类型
 	//【存入数据库】类型
