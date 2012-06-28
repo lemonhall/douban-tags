@@ -140,6 +140,72 @@ var	getUserName = function(){
 			localStorage["NeedbeSyncedCounter"]=counter;
 		}
 		return counter;
+	},	
+	redirecttoTagView=function(){
+		setTimeout(function(){
+			location.href="http://www.douban.com/people/lemonhall2012/things?renderTagView=true";
+		},1000);
+	},
+	renderTagstemplete=function(type){		
+		type		 = type || "推荐网址";
+
+		var items	 = [];
+		var templete = "";
+		Object.keys(localStorage)
+	      .forEach(function(key){
+	          var status=JSON.parse(localStorage[key]);
+	          if(status.hasOwnProperty("hasSync")){
+	          	//console.log(status.action);
+	          	if(status.action===type){
+	          		items.push(status.user_quote);
+	          	}
+	          }
+	       });
+
+	    templete=items.join("<br><br>");
+	    return templete;
+	},
+	render_asideWeigt=function(){
+			var Weigt="";
+			var aside    = "<div class='aside'>";
+			var end_div  = "</div>";
+			var content	 = "<div class='hd'><h2>分类。。。。。</h2></div>";
+			var byclass = "<div><a class='render-byclass' data-byclass='我说'>我说</a></div>";
+			Weigt=aside+content+byclass+end_div;
+
+			return Weigt;
+	},
+	reRenderArticleWeigt= function(type){
+		console.log("入口参数："+type);
+		$(".article").html("");
+			var templete = renderTagstemplete(type);
+		$(".article").html(templete);
+	},
+	renderTagView=function(){
+		//<div id="db-usr-profile">
+		//<div class="clear">
+		//<div class="grid-16-8 clearfix">
+		//<div class="article">
+		//<div class='paginator'>
+		//<div class="aside">
+		//<div class="extra">
+		var clearfix = "<div class='grid-16-8 clearfix'>";
+		var article  = "<div class='article'>";
+		var paginator= "<div class='paginator'>";
+		var aside    = render_asideWeigt();
+		var extra	 = "<div class='extra'>";
+		var end_div  = "</div>"
+		var templete = renderTagstemplete();
+		var content  = clearfix+article+templete+end_div+aside+extra+end_div+end_div;
+
+			$(".clearfix").remove();
+			$("#db-usr-profile").after(content);
+			//以后可以建立数组并动态绑定事件到对应的事件
+			$(".render-byclass").bind("click",function(){
+				var type=$("this").attr("data-byclass");
+				reRenderArticleWeigt(type);
+			});
+
 	},
 	initUpdateView = function (){
 			var doumail=$("a[href*='http://www.douban.com/doumail/']");
@@ -151,7 +217,7 @@ var	getUserName = function(){
 				});
 			var douban_tags_report=$("#douban-tags-report");
 			douban_tags_report.bind("click",function(event){
-				redirecttoDouMail();
+				redirecttoTagView();
 			});			
 	},
 	getStatuData = function(objStatu){
@@ -264,6 +330,9 @@ var	getUserName = function(){
 		if(urlParams["savebyme"]==="true"){
 				savetoDouMail();
 		}
+		if(urlParams["renderTagView"]==="true"){
+				renderTagView();
+		}		
 		if(location.href==="http://www.douban.com/doumail/"){
 
 		}
