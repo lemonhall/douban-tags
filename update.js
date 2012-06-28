@@ -149,7 +149,7 @@ var	getUserName = function(){
 	initUpdateView = function (){
 			var doumail=$("a[href*='http://www.douban.com/doumail/']");
 
-			doumail.after("<a id='douban-tags-report'>收藏报告("+getNeedbeSyncedCounter()+")</a>");
+			doumail.after("<a id='douban-tags-report'>我的收藏</a>");
 			var reshare_btn=$("div.actions a.btn-reshare");
 				reshare_btn.each(function(){
 						$(this).after("&nbsp;&nbsp;<a class='btn-tag-it'>收藏该条目</a>");
