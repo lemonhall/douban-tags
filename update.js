@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2010 The Chromium Authors. All rights reserved.  Use of this
  * source code is governed by a BSD-style license that can be found in the
  * LICENSE file.
@@ -144,77 +144,7 @@ var	getUserName = function(){
 	redirecttoTagView=function(){
 		setTimeout(function(){
 			location.href="http://www.douban.com/people/lemonhall2012/things?renderTagView=true";
-		},1000);
-	},
-	renderTagstemplete=function(type){		
-		type		 = type || "推荐网址";
-		console.log("入口参数："+type);
-		var items	 = [];
-		var templete = "";
-		Object.keys(localStorage)
-	      .forEach(function(key){
-	          var status=JSON.parse(localStorage[key]);
-	          if(status.hasOwnProperty("hasSync")){
-	          	//console.log(status.action);
-	          	if(status.action===type){
-	          		items.push(status.user_quote);
-	          	}
-	          }
-	       });
-
-	    templete=items.join("<br><br>");
-	    return templete;
-	},
-	render_asideWeigt=function(){
-			var Weigt="";
-			var aside    = "<div class='aside'>";
-			var end_div  = "</div>";
-			var content	 = "<div class='hd'><h2>分类。。。。。</h2></div>";
-			var byclass =[];
-			datatypehash.forEach(function(key){
-	          var kind=datatypehash[key]);
-			  var temp="<a class='render-byclass' data-byclass='*kind*'>*kind*</a>";
-			  temp.replace("*kind*",kind);
-			  byclass.push(temp);
-
-	       });
-			var byclass_string=byclass.join("");
-			var byclass_final = "<div>"+byclass_string+"</div>";
-			Weigt=aside+content+byclass_final+end_div;
-
-			return Weigt;
-	},
-	reRenderArticleWeigt= function(type){
-		//console.log("入口参数："+type);
-		$(".article").html("");
-			var templete = renderTagstemplete(type);
-		$(".article").html(templete);
-	},
-	renderTagView=function(){
-		//<div id="db-usr-profile">
-		//<div class="clear">
-		//<div class="grid-16-8 clearfix">
-		//<div class="article">
-		//<div class='paginator'>
-		//<div class="aside">
-		//<div class="extra">
-		var clearfix = "<div class='grid-16-8 clearfix'>";
-		var article  = "<div class='article'>";
-		var paginator= "<div class='paginator'>";
-		var aside    = render_asideWeigt();
-		var extra	 = "<div class='extra'>";
-		var end_div  = "</div>"
-		var templete = renderTagstemplete();
-		var content  = clearfix+article+templete+end_div+aside+extra+end_div+end_div;
-
-			$(".clearfix").remove();
-			$("#db-usr-profile").after(content);
-			//以后可以建立数组并动态绑定事件到对应的事件
-			$(".render-byclass").bind("click",function(){
-				var type=$(this).attr("data-byclass");
-				reRenderArticleWeigt(type);
-			});
-
+		},300);
 	},
 	initUpdateView = function (){
 			var doumail=$("a[href*='http://www.douban.com/doumail/']");
@@ -305,12 +235,62 @@ var	getUserName = function(){
 		NeedbeSyncedDataArray.push(NeedbeSyncedDataID);
 		localStorage["NeedbeSyncedDataArray"]=JSON.stringify(NeedbeSyncedDataArray);
 	},
+	addKindCounter=function(type){
+		var type=type || "我说";
+		var KindCounter={};
+		var counter=0;
+		if(localStorage.hasOwnProperty("KindCounter")){
+			KindCounter=JSON.parse(localStorage["KindCounter"]);
+			if(KindCounter.hasOwnProperty(type)){
+				counter=KindCounter[type];
+				counter++;
+				KindCounter[type]=counter;
+				localStorage["KindCounter"]=JSON.stringify(KindCounter);
+			}else{	
+				//first blood
+				KindCounter[type]=1;
+				localStorage["KindCounter"]=JSON.stringify(KindCounter);
+			}
+		}else{
+			//first blood			
+			var oneKindCounter={};
+			oneKindCounter[type]=1;
+			localStorage["KindCounter"]=JSON.stringify(oneKindCounter);
+		}
+	},
+	addtoKindIndxer=function(type,id){
+		var type		=	type || "我说";
+		var id 			=	id || "11";
+		var KindIndxer 	=	{};
+		var ids 		=	[];
+		if(localStorage.hasOwnProperty("KindIndxer")){
+			KindIndxer=JSON.parse(localStorage["KindIndxer"]);
+			if(KindIndxer.hasOwnProperty(type)){
+				ids=JSON.parse(KindIndxer[type]);
+				ids.push(id);
+				KindIndxer[type]=JSON.stringify(ids);
+				localStorage["KindIndxer"]=JSON.stringify(KindIndxer);
+			}else{
+				//first blood
+				ids.push(id);
+				KindIndxer[type]=JSON.stringify(ids);
+				localStorage["KindIndxer"]=JSON.stringify(KindIndxer);
+			}
+		}else{
+			//first blood			
+				ids.push(id);
+				KindIndxer[type]=JSON.stringify(ids);
+				localStorage["KindIndxer"]=JSON.stringify(KindIndxer);
+		}
+	},
 	savetoDB = function (_Statue){
 		if(localStorage.hasOwnProperty(_Statue.data_sid)){
 			_Statue=JSON.parse(localStorage[_Statue.data_sid]);
 		}else{
 			addNeedbeSyncedCounter();
 			addNeedbeSyncedDataID(_Statue.data_sid);
+			addKindCounter(_Statue.action);
+			addtoKindIndxer(_Statue.action,_Statue.data_sid);
 		}
 		if (_Statue.hasSync=="true") {
 				//DO nothing
@@ -331,19 +311,11 @@ var	getUserName = function(){
 					if(debug==1){console.log("用户发言:"+oneStatue.user_quote);}
 				savetoDB(oneStatue);			
 				
-		});//End of 收藏 LocalStorage
-
-				
+		});//End of 收藏 LocalStorage				
 	},
 	router = function (){
 		if(urlParams["savebyme"]==="true"){
 				savetoDouMail();
-		}
-		if(urlParams["renderTagView"]==="true"){
-				renderTagView();
-		}		
-		if(location.href==="http://www.douban.com/doumail/"){
-
 		}
 		if(ifupdate_url){
 			initUpdateView();
