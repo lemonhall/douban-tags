@@ -148,7 +148,7 @@ var	getUserName = function(){
 	},
 	renderTagstemplete=function(type){		
 		type		 = type || "推荐网址";
-
+		console.log("入口参数："+type);
 		var items	 = [];
 		var templete = "";
 		Object.keys(localStorage)
@@ -170,13 +170,22 @@ var	getUserName = function(){
 			var aside    = "<div class='aside'>";
 			var end_div  = "</div>";
 			var content	 = "<div class='hd'><h2>分类。。。。。</h2></div>";
-			var byclass = "<div><a class='render-byclass' data-byclass='我说'>我说</a></div>";
-			Weigt=aside+content+byclass+end_div;
+			var byclass =[];
+			datatypehash.forEach(function(key){
+	          var kind=datatypehash[key]);
+			  var temp="<a class='render-byclass' data-byclass='*kind*'>*kind*</a>";
+			  temp.replace("*kind*",kind);
+			  byclass.push(temp);
+
+	       });
+			var byclass_string=byclass.join("");
+			var byclass_final = "<div>"+byclass_string+"</div>";
+			Weigt=aside+content+byclass_final+end_div;
 
 			return Weigt;
 	},
 	reRenderArticleWeigt= function(type){
-		console.log("入口参数："+type);
+		//console.log("入口参数："+type);
 		$(".article").html("");
 			var templete = renderTagstemplete(type);
 		$(".article").html(templete);
@@ -202,7 +211,7 @@ var	getUserName = function(){
 			$("#db-usr-profile").after(content);
 			//以后可以建立数组并动态绑定事件到对应的事件
 			$(".render-byclass").bind("click",function(){
-				var type=$("this").attr("data-byclass");
+				var type=$(this).attr("data-byclass");
 				reRenderArticleWeigt(type);
 			});
 
