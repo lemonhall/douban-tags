@@ -21,9 +21,15 @@
 
 var datatypehash={3043:"推荐单曲",1025:"上传照片",1026:"相册推荐",1013:"推荐小组话题",1018:"我说",1015:"推荐/新日记",1022:"推荐网址",1012:"推荐书评",1002:"看过电影",3049:"读书笔记",1011:"活动兴趣",3065:"东西",1001:"想读/读过",1003:"想听/听过"};
 //加载初期就读入硬盘上的两个索引，以便快速处理页面
-var KindIndxer	= JSON.parse(localStorage["KindIndxer"]) 	|| {};
-var KindCounter	= JSON.parse(localStorage["KindCounter"]) 	|| {};
+//TODO:当没有任何数据的时候，JS会报错，记得处理这个问题
+var KindIndxer		= JSON.parse(localStorage["KindIndxer"]) 	|| {};
+var KindCounter		= JSON.parse(localStorage["KindCounter"]) 	|| {};
+var UserIndxer		= JSON.parse(localStorage["UserIndxer"]) 	|| {};
+var UserCounter		= JSON.parse(localStorage["UserCounter"]) 	|| {};
 
+var renderOption	=	{};
+
+//这个函数也需要泛化
 var	renderTagstemplete=function(type){		
 		var type	 = type || "我说";
 		//console.log("入口参数："+type);
@@ -39,6 +45,23 @@ var	renderTagstemplete=function(type){
 		});
 	    templete=items.join("<br><br>");
 	    return templete;
+	},
+	byuser_temple=function(){
+		var Weigt="";
+		var content	 = "<div class='hd'><h2>用户。。。。。</h2></div>";
+		var byUser =[];
+		Object.keys(UserCounter)
+				.forEach(function(key){
+          			var counter= UserCounter[key];
+		  			var temp="<a class='render-byuser' data-byuser='*User*'>*User*("+counter+")</a>";
+		  			byUser.push(temp.replace("*User*",key).replace("*User*",key));
+
+       			});
+       	var byUser_string=byUser.join("&nbsp;&nbsp;");
+		var byUser_string = "<div>"+byUser_string+"</div>";
+		Weigt=content+byUser_string;
+		return Weigt;
+
 	},
 	byclass_temple=function(){
 		var Weigt="";
@@ -79,8 +102,9 @@ var	renderTagstemplete=function(type){
     		var byclass			=	byclass_temple();
     		var search			=	search_temple();
     		var date 			=   date_temple();
+    		var user 			=	byuser_temple();
 			$(".aside").html("");			
-			$(".aside").html(aside+byclass+"<br/>"+search+"<br/>"+date+end_div);
+			$(".aside").html(aside+byclass+"<br/>"+search+"<br/>"+date+"<br/>"+user+end_div);
 			//以后可以建立数组并动态绑定事件到对应的事件
 			$(".render-byclass").bind("click",function(){
 				var type=$(this).attr("data-byclass");

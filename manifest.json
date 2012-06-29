@@ -12,7 +12,7 @@
       "matches" : [
         "http://www.douban.com/update/*"
       ],
-      "js" : ["jquery-1.7.2.min.js","update.js"],
+      "js" : ["jquery-1.7.2.min.js","underscore-min.js","update.js"],
       "run_at" : "document_end",
       "all_frames" : false
     },

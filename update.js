@@ -235,52 +235,54 @@ var	getUserName = function(){
 		NeedbeSyncedDataArray.push(NeedbeSyncedDataID);
 		localStorage["NeedbeSyncedDataArray"]=JSON.stringify(NeedbeSyncedDataArray);
 	},
-	addKindCounter=function(type){
-		var type=type || "我说";
-		var KindCounter={};
-		var counter=0;
-		if(localStorage.hasOwnProperty("KindCounter")){
-			KindCounter=JSON.parse(localStorage["KindCounter"]);
-			if(KindCounter.hasOwnProperty(type)){
-				counter=KindCounter[type];
+	addGenericCounter=function(Generic,key){
+		var CounterName=Generic+"Counter";
+		var key=key || "我说";
+		var keyCounter={};
+		var counter=0;		
+		if(localStorage.hasOwnProperty(CounterName)){
+			keyCounter=JSON.parse(localStorage[CounterName]);
+			if(keyCounter.hasOwnProperty(key)){
+				counter=keyCounter[key];
 				counter++;
-				KindCounter[type]=counter;
-				localStorage["KindCounter"]=JSON.stringify(KindCounter);
+				keyCounter[key]=counter;
+				localStorage[CounterName]=JSON.stringify(keyCounter);
 			}else{	
 				//first blood
-				KindCounter[type]=1;
-				localStorage["KindCounter"]=JSON.stringify(KindCounter);
+				keyCounter[key]=1;
+				localStorage[CounterName]=JSON.stringify(keyCounter);
 			}
 		}else{
 			//first blood			
-			var oneKindCounter={};
-			oneKindCounter[type]=1;
-			localStorage["KindCounter"]=JSON.stringify(oneKindCounter);
+			var onekeyCounter={};
+			onekeyCounter[key]=1;
+			localStorage[CounterName]=JSON.stringify(onekeyCounter);
 		}
 	},
-	addtoKindIndxer=function(type,id){
-		var type		=	type || "我说";
+	addGenericIndexer=function(Generic,key,id){
+		var IndxerName	=	Generic+"Indxer";
+		var key			=	key || "我说";
 		var id 			=	id || "11";
-		var KindIndxer 	=	{};
-		var ids 		=	[];
-		if(localStorage.hasOwnProperty("KindIndxer")){
-			KindIndxer=JSON.parse(localStorage["KindIndxer"]);
-			if(KindIndxer.hasOwnProperty(type)){
-				ids=JSON.parse(KindIndxer[type]);
+		var keyIndexer 	=	{};
+		var ids 		=	[];		
+		if(localStorage.hasOwnProperty(IndxerName)){
+			keyIndexer=JSON.parse(localStorage[IndxerName]);
+			if(keyIndexer.hasOwnProperty(key)){
+				ids=JSON.parse(keyIndexer[key]);
 				ids.push(id);
-				KindIndxer[type]=JSON.stringify(ids);
-				localStorage["KindIndxer"]=JSON.stringify(KindIndxer);
+				keyIndexer[key]=JSON.stringify(ids);
+				localStorage[IndxerName]=JSON.stringify(keyIndexer);
 			}else{
 				//first blood
 				ids.push(id);
-				KindIndxer[type]=JSON.stringify(ids);
-				localStorage["KindIndxer"]=JSON.stringify(KindIndxer);
+				keyIndexer[key]=JSON.stringify(ids);
+				localStorage[IndxerName]=JSON.stringify(keyIndexer);
 			}
 		}else{
 			//first blood			
 				ids.push(id);
-				KindIndxer[type]=JSON.stringify(ids);
-				localStorage["KindIndxer"]=JSON.stringify(KindIndxer);
+				keyIndexer[key]=JSON.stringify(ids);
+				localStorage[IndxerName]=JSON.stringify(keyIndexer);
 		}
 	},
 	savetoDB = function (_Statue){
@@ -289,8 +291,10 @@ var	getUserName = function(){
 		}else{
 			addNeedbeSyncedCounter();
 			addNeedbeSyncedDataID(_Statue.data_sid);
-			addKindCounter(_Statue.action);
-			addtoKindIndxer(_Statue.action,_Statue.data_sid);
+			addGenericCounter("Kind",_Statue.action);
+			addGenericIndexer("Kind",_Statue.action,_Statue.data_sid);
+			addGenericCounter("User",_Statue.user_uid);
+			addGenericIndexer("User",_Statue.user_uid,_Statue.data_sid);
 		}
 		if (_Statue.hasSync=="true") {
 				//DO nothing
